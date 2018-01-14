@@ -1,4 +1,4 @@
-package crodoc.generic;
+package crodoc.solution;
 
 public abstract class Solution implements Comparable<Solution> {
 
@@ -21,5 +21,18 @@ public abstract class Solution implements Comparable<Solution> {
 
     public abstract Solution copy();
     public abstract String ToStr();
+
+    @Override
+    public int compareTo(Solution o) {
+        if (fitness < o.fitness) {
+            return -1;
+        }
+
+        if (fitness > o.fitness) {
+            return 1;
+        }
+
+        return 0;
+    }
 }
 

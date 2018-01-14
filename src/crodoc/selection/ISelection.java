@@ -1,6 +1,6 @@
 package crodoc.selection;
 
-import crodoc.generic.Solution;
+import crodoc.solution.Solution;
 import java.util.List;
 
 public interface ISelection<T extends Solution> {
