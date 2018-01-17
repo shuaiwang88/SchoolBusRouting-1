@@ -17,11 +17,13 @@ public class Main {
             a.analyze();
         }*/
 
+        int i = Integer.parseInt(args[0]);
+
         double bst = 100000454540.0;
 
         for (int k = 0; k < 10000;k++) {
 
-        for (int i = 8; i <= 8; i++) {
+         {
 
             Problem p = new Problem("sbr" + i + ".txt");
 
