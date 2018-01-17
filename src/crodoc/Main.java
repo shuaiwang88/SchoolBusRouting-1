@@ -21,12 +21,9 @@ public class Main {
 
         double bst = 100000454540.0;
 
-        for (int k = 0; k < 10000;k++) {
-
+        for (int k = 0; ;k++) {
          {
-
             Problem p = new Problem("sbr" + i + ".txt");
-
 
             ListSolution s = null;
             while (s == null) {
