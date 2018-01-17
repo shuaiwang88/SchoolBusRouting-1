@@ -22,6 +22,24 @@ public class ListSolution extends Solution{
 
     @Override
     public String ToStr() {
-        return null;
+        StringBuilder b = new StringBuilder();
+
+        for (Bus bus : buses) {
+            for (int i = 0; i < bus.stations.size(); i++) {
+                if (i != 0) {
+                    b.append(" ");
+                }
+                b.append(bus.stations.get(i));
+            }
+            b.append("\n");
+        }
+
+        b.append("\n");
+
+        for (int i = 0; i < students.length; i++) {
+            b.append(i+1 + " " + students[i] + "\n");
+        }
+
+        return b.toString();
     }
 }

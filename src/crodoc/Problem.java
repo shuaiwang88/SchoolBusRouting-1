@@ -26,7 +26,7 @@ public class Problem {
 
         stops = sc.nextInt(); sc.next();
         students = sc.nextInt(); sc.next();
-        distance = sc.nextDouble(); sc.next(); sc.next();
+        distance = Double.parseDouble(sc.next()); sc.next(); sc.next();
         capacity = sc.nextInt(); sc.next();
 
         stopX = new double[stops];
@@ -34,8 +34,8 @@ public class Problem {
 
         for (int i = 0; i < stops; i++) {
             sc.nextInt();
-            stopX[i] = sc.nextDouble();
-            stopY[i] = sc.nextDouble();
+            stopX[i] = Double.parseDouble(sc.next());
+            stopY[i] = Double.parseDouble(sc.next());
         }
 
         studentX = new double[students];
@@ -43,8 +43,8 @@ public class Problem {
 
         for (int i = 0; i < students; i++) {
             sc.nextInt();
-            studentX[i] = sc.nextDouble();
-            studentY[i] = sc.nextDouble();
+            studentX[i] = Double.parseDouble(sc.next());
+            studentY[i] = Double.parseDouble(sc.next());
         }
     }
 }

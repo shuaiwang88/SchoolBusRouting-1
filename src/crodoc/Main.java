@@ -1,7 +1,9 @@
 package crodoc;
 
 import crodoc.analysis.Analizator;
+import crodoc.evaluator.ListEvaluator;
 import crodoc.solution.ListSolution;
+import crodoc.stationBus.BusSelector;
 import crodoc.stationBus.StationSelector;
 
 public class Main {
@@ -12,9 +14,17 @@ public class Main {
             a.analyze();
         }*/
 
-        Problem p = new Problem("sbr5.txt");
-        ListSolution s = StationSelector.selectStations(p);
+        for (int i = 2; i <= 2; i++) {
 
-        System.out.println(s);
+            Problem p = new Problem("sbr" + i + ".txt");
+            ListSolution s = StationSelector.selectStations(p);
+            BusSelector.selectStations(s, p);
+
+            ListEvaluator le = new ListEvaluator(p);
+            le.evaluate(s);
+
+            //System.out.println(i + " " + s.getFitness());
+            System.out.println(s.ToStr());
+        }
     }
 }
