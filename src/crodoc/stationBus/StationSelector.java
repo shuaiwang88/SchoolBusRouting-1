@@ -4,7 +4,9 @@ import crodoc.Problem;
 import crodoc.solution.ListSolution;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class StationSelector {
     public static ListSolution selectStations(Problem p) {
@@ -13,7 +15,7 @@ public class StationSelector {
 
         boolean stopVisited[] = new boolean[stops+1];
 
-        ListSolution s = new ListSolution(students, stops);
+        ListSolution s = new ListSolution(students);
 
         List<Integer> sortedStops = new ArrayList<>();
         for (int i = 1; i <= stops; i++) {
@@ -21,16 +23,19 @@ public class StationSelector {
         }
 
         sortedStops.sort((Integer a, Integer b) -> sDiff(a,b,p));
+        Random rand = new Random();
 
+        int cnt2 = 0;
         while (students != 0) {
-
             int who = -1;
             int cnt = 0;
             boolean nxt = false;
 
             int tmp;
-
             for (int index = 0; index < stops; index++) {
+                if (rand.nextDouble() < 0.2) {
+                    continue;
+                }
                 int st = sortedStops.get(index);
                 if (stopVisited[st]) {
                     continue;
@@ -45,21 +50,25 @@ public class StationSelector {
                 }
 
                 if (tmp >= p.capacity) {
-                    tmp = 0;
                     nxt = true;
+                    tmp = p.capacity;
 
                     stopVisited[st] = true;
 
+                    List<Integer> ss = new ArrayList<>();
+
                     for (int id = 0; id < p.students; id++) {
                         if (s.students[id] == 0 && studentDist(id, st, p) <= p.distance) {
-                            s.students[id] = st;
-                            students--;
-                            tmp++;
-                        }
 
-                        if (tmp == p.capacity) {
-                            break;
+                            ss.add(id);
                         }
+                    }
+
+                    Collections.shuffle(ss);
+
+                    for (int id = 0; id < tmp; id++) {
+                        s.students[ss.get(id)] = st;
+                        students--;
                     }
 
                     break;
@@ -69,6 +78,14 @@ public class StationSelector {
                     cnt = tmp;
                     who = st;
                 }
+            }
+
+            if (cnt2++ == 1000) {
+                return null;
+            }
+
+            if (who == -1) {
+               continue;
             }
 
             if (!nxt) {

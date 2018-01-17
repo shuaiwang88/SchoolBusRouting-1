@@ -2,22 +2,36 @@ package crodoc.solution;
 
 public class ListSolution extends Solution{
     public int[] students;
-    public int[] stops;
     public Bus[] buses;
 
-    public ListSolution(int[] students, int[] stops) {
+    public ListSolution(int[] students, Bus[] buses) {
         this.students = students;
-        this.stops = stops;
+        this.buses = buses;
     }
 
-    public ListSolution(int studentCount, int stopCount) {
+    public ListSolution(int studentCount) {
         students = new int[studentCount];
-        stops = new int[stopCount];
     }
 
     @Override
-    public Solution copy() {
-        return null;
+    public ListSolution copy() {
+        int[] s2 = new int[students.length];
+        Bus[] b2 = new Bus[buses.length];
+
+        for (int i = 0; i < s2.length; i++) {
+            s2[i] = students[i];
+        }
+
+        for (int i = 0; i < b2.length; i++) {
+            b2[i] = new Bus();
+
+            b2[i].stations.addAll(buses[i].stations);
+        }
+
+        ListSolution res = new ListSolution(s2, b2);
+        res.setFitness(getFitness());
+
+        return res;
     }
 
     @Override

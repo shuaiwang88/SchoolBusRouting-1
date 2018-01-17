@@ -11,10 +11,12 @@ public class ListEvaluator implements IEvaluator<ListSolution> {
     public ListEvaluator(Problem problem) {
         this.p = problem;
     }
+    public static int hm = 0;
 
     @Override
     public void evaluate(ListSolution solution) {
 
+        hm++;
         double dist = 0.0;
 
         for(Bus b : solution.buses) {
