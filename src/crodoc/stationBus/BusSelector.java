@@ -102,12 +102,12 @@ public class BusSelector {
         bst = s.copy();
 
         ListSolution ss = s.copy();
-        for (int z = 0; z < stops.length && z < 7;z++) {
+        for (int z = 0; z < stops.length && z < 10;z++) {
             s = ss.copy();
 
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 400; i++) {
                 for (int j = 0; j < stops.length; j++) {
-                    for (int k = 1; k <= 7; k++) {
+                    for (int k = 1; k <= 9; k++) {
                         if (j+k < stops.length) {
                             swap(stopCnt, stops, j, j+k);
                             s.buses = realDP(s, stopCnt, stops, p);

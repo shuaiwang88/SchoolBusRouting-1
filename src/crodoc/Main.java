@@ -6,8 +6,10 @@ import crodoc.solution.ListSolution;
 import crodoc.stationBus.BusSelector;
 import crodoc.stationBus.StationSelector;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -36,6 +38,22 @@ public class Main {
             if (s.getFitness() < bst) {
                 System.out.println(k + " " + s.getFitness());
                 bst = s.getFitness();
+
+                Scanner sc;
+                double fit = 10000000000.0;
+
+                try {
+                    sc = new Scanner(new File("result/info"+i+".txt")) ;
+                    fit = Double.parseDouble(sc.next());
+
+                } catch (Exception e) {
+
+                }
+
+                if (fit <= s.getFitness()) {
+                    continue;
+                }
+                System.out.println("BEST");
 
                 PrintWriter out;
 
