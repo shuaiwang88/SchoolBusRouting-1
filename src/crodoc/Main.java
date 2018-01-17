@@ -14,17 +14,15 @@ public class Main {
             a.analyze();
         }*/
 
-        for (int i = 2; i <= 2; i++) {
+        for (int i = 8; i <= 8; i++) {
+            System.out.println(i);
 
             Problem p = new Problem("sbr" + i + ".txt");
             ListSolution s = StationSelector.selectStations(p);
             BusSelector.selectStations(s, p);
 
-            ListEvaluator le = new ListEvaluator(p);
-            le.evaluate(s);
-
             //System.out.println(i + " " + s.getFitness());
-            System.out.println(s.ToStr());
+            //System.out.println(s.ToStr());
         }
     }
 }
