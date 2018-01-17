@@ -102,19 +102,19 @@ public class BusSelector {
         bst = s.copy();
 
         ListSolution ss = s.copy();
-        for (int z = 0; z < stops.length && z < 10;z++) {
+        for (int z = 0; z < stops.length && z < 3;z++) {
             s = ss.copy();
 
-            for (int i = 0; i < 400; i++) {
+            for (int i = 0; i < 70; i++) {
                 for (int j = 0; j < stops.length; j++) {
-                    for (int k = 1; k <= 9; k++) {
+                    for (int k = 1; k <= 4; k++) {
                         if (j+k < stops.length) {
                             swap(stopCnt, stops, j, j+k);
                             s.buses = realDP(s, stopCnt, stops, p);
                             addfull(s, full);
                             le.evaluate(s);
 
-                            if (s.compareTo(bst) <= 0) {
+                            if (s.compareTo(bst) < 0) {
                                 bst = s.copy();
                                 //System.out.println(bst.getFitness());
                             } else {
@@ -125,9 +125,11 @@ public class BusSelector {
                 }
             }
 
+            for (int ff = 0; ff < 4; ff++) {
 
-            for (int j = 1; j < stops.length; j++) {
-                swap(stopCnt, stops, j, j-1);
+                for (int j = 1; j < stops.length; j++) {
+                    swap(stopCnt, stops, j, j - 1);
+                }
             }
         }
 

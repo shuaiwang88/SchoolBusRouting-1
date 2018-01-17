@@ -4,6 +4,7 @@ import crodoc.analysis.Analizator;
 import crodoc.evaluator.ListEvaluator;
 import crodoc.solution.ListSolution;
 import crodoc.stationBus.BusSelector;
+import crodoc.stationBus.SparseStationSelector;
 import crodoc.stationBus.StationSelector;
 
 import java.io.File;
@@ -13,11 +14,13 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+
         /*
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 3; i <= 3; i++) {
             Analizator a = new Analizator("sbr" + i + ".txt");
             a.analyze();
         }*/
+
 
         int i = Integer.parseInt(args[0]);
 
