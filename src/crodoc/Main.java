@@ -22,11 +22,15 @@ public class Main {
         }*/
 
 
-        int i = Integer.parseInt(args[0]);
+        //int i = Integer.parseInt(args[0]);
+
+        for (int i = 1; i <= 10; i++) {
 
         double bst = 100000454540.0;
 
-        for (int k = 0; ;k++) {
+        long t = System.currentTimeMillis();
+
+        for (int k = 0; System.currentTimeMillis() - t < 60*1000;k++) {
          {
             Problem p = new Problem("sbr" + i + ".txt");
 
@@ -46,7 +50,7 @@ public class Main {
                 double fit = 10000000000.0;
 
                 try {
-                    sc = new Scanner(new File("result/info"+i+".txt")) ;
+                    sc = new Scanner(new File("result/info-1m"+i+".txt")) ;
                     fit = Double.parseDouble(sc.next());
 
                 } catch (Exception e) {
@@ -61,7 +65,7 @@ public class Main {
                 PrintWriter out;
 
                 try {
-                    out = new PrintWriter("result/res-ne-sbr" + i + ".txt");
+                    out = new PrintWriter("result/res-1m-sbr" + i + ".txt");
                 } catch (FileNotFoundException e) {
                     throw new IllegalArgumentException();
                 }
@@ -70,7 +74,7 @@ public class Main {
                 out.close();
 
                 try {
-                    out = new PrintWriter("result/info" + i + ".txt");
+                    out = new PrintWriter("result/info-1m" + i + ".txt");
                 } catch (FileNotFoundException e) {
                     throw new IllegalArgumentException();
                 }
@@ -81,6 +85,6 @@ public class Main {
             }
             //System.out.println(s.ToStr());
         }
-        }
+        }}
     }
 }
