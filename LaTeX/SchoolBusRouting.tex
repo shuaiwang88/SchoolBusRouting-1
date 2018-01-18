@@ -1,6 +1,13 @@
 \documentclass[times, utf8, seminar, numeric]{fer}
 \usepackage{booktabs}
- \usepackage{url}
+\usepackage{url}
+\usepackage{mathpazo}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
 
 \begin{document}
 
@@ -23,96 +30,143 @@
 \chapter{Opis problema}
 Problem usmjeravanja školskih autobusa je varijacija problema usmjeravanja vozila, koji se od osnovnog problema razlikuje po tome što nije striktno zadano koja je sve mjesta potrebno posjetiti, već je dana lista potencijalnih stanica, i na algoritmu je da sam odabere koje će od njih i kojim redom posjetiti, te da pritom zadovolji sva zadana ograničenja.
 
-Konkretno, u problemu su definirane lokacije potencijalnih stanica školskih autobusa, lokacije svih učenika koji školskim autobusima putuju do škole, te lokacija same škole u koju svi studenti moraju u što kraćem vremenu prispjeti. Zadatak se sastoji u tome da se odabere skup stanica koje će školski autobusi posjetiti, potom odredi koji će učenici propješaćiti i biti pokupljeni na kojim stanicama, te na kraju, koji će autobusi i kojim redom posjetiti sve potrebne stanice. Svi učenici imaju (jednak) ograničen radijus kretanja, tako da im se može dodijeliti samo neka od stanica u njihovu dometu. Također, svi autobusi imaju ograničen broj mjesta, tako da ne mogu odjednom prevesti više učenika od onoga koliki im je kapacitet. Isto tako, jednu stanicu može posjetiti samo jedan autobus, i svi učenici koji čekaju na njoj moraju se tada ukrcati u taj autobus.
+Konkretno, u problemu su definirane lokacije potencijalnih stanica školskih autobusa, lokacije svih učenika koji školskim autobusima putuju do škole, te lokacija same škole u koju svi učenici moraju u što kraćem vremenu prispjeti. Zadatak se sastoji u tome da se odabere skup stanica koje će školski autobusi posjetiti, potom odredi koji će učenici propješaćiti i biti pokupljeni na kojim stanicama, te na kraju, koji će autobusi i kojim redom posjetiti sve potrebne stanice. Svi učenici imaju (jednak) ograničen radijus kretanja, tako da im se može dodijeliti samo neka od stanica u njihovu dometu. Također, svi autobusi imaju ograničen broj mjesta, tako da ne mogu odjednom prevesti više učenika od onoga koliki im je kapacitet. Isto tako, jednu stanicu može posjetiti samo jedan autobus, i svi učenici koji čekaju na njoj moraju se tada ukrcati u taj autobus.
 
 \chapter{Algoritam}
-Tokom rada na projektu isprobano je mnoštvo različitih pristupa i algoritama. Pristup prikazan u nastavku dao je najbolje rezultate.
+Pri rješavanju ovog problema iskušano je nekoliko različitih pristupa i algoritama, i izrađena su dva sasvim odvojena rješenja, a sveukupno najboljim se pokazalo rješenje opisano u nastavku.
 
-Algoritam djeluje neovisno na nekoliko razina. Prva razina je pridruživanje svakom studentu autobusnu stanicu pazeći pritom da se ne premaši granica maksimalnog kapaciteta jednog autobusa. Na drugoj razini iz skupa stanica koje se posjećuju odabire se redosljed njihovog posjećivanja. Na trećoj razini izvodi se lokalna pretraga koja pokušava poboljšati trenutni redosljed. Konačno na četvrtoj razini iz prethodnog redosljeda na optimalan način se raspoređuju autobusi koristeći dinamičko programiranje.
+Konačni algoritam, po uzoru i na strukturu problema, je slojevit, i sastoji se od dvije razine. Na prvoj se za svakog učenika odabire odgovarajuća autobusna stanica, ali tako da dobiveni raspored zadovolji sva ograničenja problema. Na drugoj se pak razini za odabrani raspored učenika po stanicama određuje optimalan redoslijed autobusnih ruta koje će posjetiti sve odabrane stanice, i to se vrši u tri koraka. Prvo se odabire neki inicijalni redoslijed posjećivanja stanica, potom se on lokalnim pretraživanjem pokušava što više poboljšati, a konačno se optimalan raspored autobusa po odabranim stanicama određuje pomoću dinamičkog programiranja.
 
-Algoritam izbacuje stanice koje su napunile maksimalni kapacitet te ih na kraju samo dodaje u rješenje. Ukoliko postoji 11 ili manje stanica koje nisu napunile maksimalni kapacitet, umjesto lokalne pretrage se vrši pretraga svih mogućih permutacija obilaska stanica.
+Algoritam pritom (u odabiru redoslijeda posjećivanja stanica) ne razmatra stanice koje su ispunjene do ruba kapaciteta (tj. maksimalnog kapaciteta autobusa), već njih samo na kraju dodaje u rješenje. Ako je u rješenju nakon prve razine prisutno manje od 12 stanica koje nisu popunjene do kraja, umjesto lokalne pretrage provodi se iscrpno pretraživanje svih mogućih permutacija obilazaka stanica.
 
-Struktura algoritma dana je u nastavku. Svaki korak je detaljnije opisan u sljedećim podpoglavljima.
+U nastavku su pobliže opisani struktura i rad samog algoritma, svaki korak u svom potpoglavlju.
 
-\begin{enumerate}
-\item Pridruživanje autobusnih stanica studentima
-\item Odabir redosljeda posjećivanja autobusnih stanica
-\item Lokalna ili optimalna pretraga
-\item Dinamičko programiranje
-\end{enumerate}
+\section{Pridruživanje autobusnih stanica učenicima}
+U stvarnosti se pokazalo kako je često dobro rješenje optimizacijskih problema započeti pohlepnim pristupom, i potom to pohlepno rješenje poboljšati nekom metodom usmjerene pretrage. Stoga je i u ovom algoritmu prvi korak, pridjeljivanje stanica učenicima, učinjen pohlepnim pristupom.
 
-\section{Prva razina - pridruživanje autobusnih stanica studentima}
-U praksi nam se pokazalo kako je dobro započeti rješenje pohlepnim pristupom te potom nekom usmjerenom pretragom poboljšati to rješenje. Tako se i u prvom koraku ovdje predloženog algoritma pokušava pridjeliti autobusne stanice studentima.
+Dva su kriterija kojima je to pridruživanje bilo vođeno. Prvi je kriterij bio da se u rješenju odabere što manje autobusnih stanica, a drugi da su odabrane stanice čim bliže školi. Razlozi za to su vrlo jednostavn. Ako nam je cilj minimizirati ukupnu prijeđenu udaljenost svih autobusa, očito je isplativije da što veći dio puta od svoga doma do škole učenici prijeđu pješice, tj. da ih autobus pokupi na stanici koja je najbliža školi. Također, što je manje stanica koje autobusi moraju posjetiti, za očekivati je da će i njihov ukupno prijeđeni put time biti manji.
 
-Dva kriterija su bila glavna za pridruživanje. Prvi kriterij je da se ukupno odabere što manje autobusnih stanica. Drugi kriterij je da su te stanice što bliže školi. Naime očito je isplativije da studenti hodaju što bliže školi nego da autobus ide duljim putem po njih. A i intuicija govori da ukoliko se posjećuje manje autobusnih stanica, vjerojatnije je da će ukupan put biti manji.
+Algoritam opisane kriterije u izgradnji rasporeda učenika i stanica koristi na sljedeći način: počevši od stanica najbližih školi, pokušava se pronaći ona stanica koju može posjetiti najveći broj učenika, i kada se takva stanica pronađe, obavi se pridruživanja učenika stanici. Ako neku stanicu može posjetiti više učenika nego li je njezin kapacitet, na slučajan se način izabire kojim će učenicima ona dodijeliti, što omogućuje da se u više pokretanja algoritma rješenja međusobno razlikuju.
 
-Algoritam gradi početno rješenje tako da kreće od stanica najbližih školi te pokušava naći stanicu koju mogu posjetiti najveći broj studenata. Ukoliko postoji više studenata koji mogu posjetiti određenu stanicu nego što je maksimalni kapacitet, algoritam na slučajan način odabire maksimalni podskup studenata koji će dodjeliti toj stanici. Ovo omogućuje da će se rješenja međusobno razlikovati.
+Kako je konačni algoritam vrlo brz, bilo ga je moguće pokretati mnogo puta za različite rasporede učenika po stanicama, pa je stoga u opisan pohlepni pristup raspoređivanju uveden i šum, koji uz određenu vjerojatnost ponekad preskače neku od bližih stanica i odabire dalju, čime se povećava broj ostvarivih početnih rasporeda, a tako i proširuje područje pretrage.
 
-Konačni algoritam je bio vrlo brz što nam je omogućilo da možemo mnogo puta pokretati algoritam s različitim početnim rješenjima. Zato je u pohlepno građenje početnog rješenje uveden šum koji neće uvijek uzeti najbolje rješenje prema ovoj pohlenoj heuristici. Postoji vjerojatnost da će se neke najbliže stanice ponekad preskočiti.
+Drugi pokušaji izgradnje početnog rješenja, a iskušano ih je nekoliko, nisu se pokazali mjerljivima s prethodno opisanim pristupom, te su stoga napušteni.
 
-Ostali pokušaji generiranja početnog rješenja na drukčiji način nisu usporedivi s prethodno navedenim pristupom.
+\section{Odabir inicijalnog redosljeda posjećivanja stanica}
+Za prethodno dobiveni raspored učenika po stanicama u ovom se koraku određuje preliminaran redoslijed kojim će se posjećivati sve aktivne stanice (one na kojima čeka barem jedan učenik).
 
-\section{Druga razina - Odabir redosljeda posjećivanja autobusnih stanica}
-Iz prethodnog koraka dobili smo skup stanica koje se trebaju posjetiti. U ovom koraku se odabire redosljed posjećivanja stanica.
+Odmah u početku, algoritam provjerava postoje li stanice koje su napunjene do maksimalnog kapaciteta. Sve takve stanice sigurno će biti posjećene odvojeno od svih ostalih (zasebnom autobusnom linijom), te se stoga ne razmatraju u nastavku algoritma, već se samo na kraju pridodaju rješenju. Time se smanjuje trajanje jednog izvođenja algoritma, te se to dobiveno vrijeme može korisnije utrošiti na pretragu šireg prostora ili višestruko pokretanje algoritma.
 
-Algoritam prvo provjerava da li postoje stanice koje su napunile maksimalni kapacitet. Takve stanice će sigurno posjetiti samo jedan autobus te ih možemo odmah izbaciti iz daljnjeg algoritma te ih samo naknadno dodati u rješenje. Time smo smanjili vrijeme izvođenja te to vrijeme možemo dodatno utrošiti na pretragu prostora ili višestruko pokretanje.
+One pak stanice koje nisu ispunjene do maksimalnog kapaciteta sortiraju se prema kutu u odnosu na školu kao ishodište -- jer je vjerojatnije da će se stanice sa bliskim središnjim kutem naći na ruti istog autobusa -- i tako sortiran poredak stanica predstavlja inicijalno rješenje obilaska. No kako najbolje rješenje ne mora nužno krenuti baš od stanice s najmanjom vrijednošću središnjeg kuta (tj. prvom u tom poretku), ne uzima se samo jedno inicijalno rješenje, već njih $N$, tj. sve moguće kružne rotacije tog poretka.
 
-Stanice koje nisu napunile maksimalni kapacitet se sortiraju prema kutu u odnosu na školu. Stanice sa sličnijem kutom bit će vjerojatno bliže u prostoru te je logičnije da isti autobus upravo njih posjećuje.
+\section{Lokalna ili optimalna pretraga}
+Prethodno ostvareni inicijalni poredak u ovom se koraku optimizira lokalnim ili iscrpnim pretraživanjem, ovisno o broju stanica. Ako ih je manje od $11$, iscrpno se iskušavaju sve permutacije i odabire ona koja ima najbolju vrijednost, dok se za više od $11$ stanica provodi lokalno pretraživanje koje kao operator susjedstva iskušava sve zamjene parova bliskih stanica u poretku. Kao funkcija prikladnosti koristi se ukupna udaljenost potrebna za pohlepno posjećivanje stanica, koje se vrši na način da se, počevši od prve, stanice posjećuju jedna za drugom sve dok se tako ne premaši kapacitet autobusa, kada se autobus vrati do škole, isprazni, i nastavi dalje sa prvom idućom stanicom.
 
-Sljedeći korak algoritma se izvodi nad ovim rješenjem, ali i nad rješenjem dobivenim rotacijom ovog rješenja. Ovakvim pristupom smo odredili gdje započinje prvi autobus, a najbolje rješenje ne mora nužno krenuti od kuta s najmanjom vrijednošću pri sortiranju stanica.
+\section{Dinamičko programiranje}
+I na kraju, za najbolje rješenje ostvareno prethodnim korakom optimalan redoslijed posjećivanja određuje se pomoću dinamičkog programiranja. Konkretno, u ovom se koraku određuje u kojim se sve trenutcima autobus treba vraćati do škole kako bi ostavio ukrcane učenike i potom prazan nastavio dalje sa svojim obilaskom. Drugim riječima, za u prethodnom koraku odabrani redoslijed posjećivanja stanica, ovaj korak odlučuje koji je optimalni rastav tog redoslijeda na uzastopne podnizove koje će autobus posjetiti u jednoj turi, a da pritom ne premaši svoj dopušteni kapacitet.
 
-\section{Treća razina - Lokalna ili optimalna pretraga}
-Ovaj korak se razlikuje u ovisnosti u broju stanica koje nisu maksimalno popunjene. Ukoliko je broj takvih stanica manje ili jednak 11, izvode se sve permutacije redosljeda stanica te se takvo rješenje šalje u sljedeći korak.
+Ta se odluka može donijeti optimalno pomoću dinamičkog programiranja, koristeći sljedeću rekurzivnu relaciju:
+$$DP[i] = \max(DP[i-k]+C[i-k+1,i])$$
+za svaki $k >= 1$ za koji autobus ne premašuje kapacitet. $C(i,j)$ je cijena obilaska uzastopnih stanica od indeksa $i$ do $j$ jednim autobusom.
 
-Ako je broj takvih stanica prevelik, izvodi se lokalna pretraga koja pokušava jednostavnim mutacijama pronaći bolja rješenja. Mutacije su zamjene dviju stanica u neposrednoj blizini ( ne nužno susjedne stanice ).
+\begin{algorithm}[H]
+	\caption{Pridruživanje autobusnih stanica učenicima}
+	\label{alg1}
+	\begin{algorithmic}
+		\Function{}{$students,\ stops$}
+			\State $studentStopAssignment \gets \{\varnothing\}$
+			\While{$\exists\ student\ without\ assigned\ stop$}
+				\State $bestStop \gets \argmax_{stop} (no.\ of\ possible\ students\ assigned\ to\ stop)$
+				\If {$|bestStop| > 1$} // more than one best stop
+					\State $bestStop \gets ClosestToSchool(bestStop)$
+				\EndIf
+				\State $studentStopAssignment \gets$\\ 
+				\hskip\algorithmicindent \hskip\algorithmicindent \hskip\algorithmicindent $AssignPotentialStudents(bestStop, studentStopAssignment)$
+			\EndWhile
+			\State $stopsToVisit \gets \{stop : AssignedStudents(stop) \neq \varnothing\}$
+			\State $bestSolution \gets InitialOrderAndOptimize(stopsToVisit)$
+			\State \Return $bestSolution$
+		\EndFunction		
+	\end{algorithmic}
+\end{algorithm}
 
-\section{Četvrta razina - Dinamičko programiranje}
+\begin{algorithm}[H]
+	\caption{Odabir inicijalnog redoslijeda posjećivanja}
+	\label{alg1}
+	\begin{algorithmic}
+		\Function{InitialOrderAndOptimize}{$stopsToVisit$}
+			\State $stopsToVisit' \gets stopsToVisit \setminus \{stopsFilledToCapacity\}$
+			\State $initialOrder \gets SortByAngle(stopsToVisit')$ 
+			\State $optimalOrder' \gets SearchOptimize(initialOrder)$
+			\State $optimalOrder \gets optimalOrder' \cup \{stopsFilledToCapacity\}$
+			\State \Return $optimalOrder$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
 
-Ovaj korak algoritma dobiva konačni redosljed stanica koje treba posjetiti. On odlučuje koliko će autobusa biti korišteno. Svaki autobus može posjećivati samo stanice koje su susjedne u prethodno dobivenom konačnom redosljedu. Drugim riječima, autobus može posjetiti samo uzastopni podniz stanica. Pritpom je bitno da autobus ne premaši kapacitet. Za svaki uzastopni podniz jednostavno je odrediti njegovu cijenu.
-
-Ovo se može rješiti na optimalan način koristeći dinamičko programiranje. Rekurzivna relacija dana je u nastavku:
-
-$dp(i) = max(dp(i), dp(i-k)+C(i-k+1,i))$
-
-za svaki k >= 1 za koji autobus ne premašuje kapacitet. $C(i,j)$ je cijena obilaska uzastopnih stanica od indexa $i$ do $j$ jednom autobusom.
+\begin{algorithm}[H]
+	\caption{Lokalna ili optimalna pretraga}
+	\label{alg1}
+	\begin{algorithmic}
+		\Function{SearchOptimize}{$initialOrder$}
+			\If {$ |initialOrder| < 12 $}
+				\State $bestOrder \gets TryAllPermutations(initialOrder)$
+			\Else 
+				\State $bestOrder \gets LocalSearch(initialOrder, neighborhood=swapNearby)$
+			\EndIf
+			\State $bestSolution \gets DynamicProgrammingOptimize(bestSolution)$
+			\State \Return $bestSolution$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
 
 \chapter{Rezultati}
 
-\begin{center}
- \begin{tabular}{||c c||} 
- \hline
- Instanca & Ukupan put \\ [0.5ex] 
- \hline\hline
- 1 & 140.44 \\ 
- \hline
- 2 & 101.06 \\
- \hline
- 3 & 2587.08\\
- \hline
- 4 & 1555.28 \\
- \hline
- 5 & 1864.46 \\
- \hline
- 6 & 1223.03 \\
- \hline
- 7 & 1129.24 \\
- \hline
- 8 & 632.51 \\
- \hline
- 9 & 324.29 \\
- \hline
- 10 & 135.80 \\ [1ex] 
- \hline
-\end{tabular}
-\end{center}
+U tablici \ref{table1} prikazani su svi najbolji ostvareni rezultati po pojedinim instancama problema.
 
+\begin{table}[h!]
+	\caption{Najbolji ostvareni rezultati za pojedine instance problema}
+	\label{table1}
+	\begin{center}
+		\begin{tabular}{|c c|} 
+			\hline
+			Instanca & Ukupan put \\ [0.5ex] 
+			\hline\hline
+			1 & 140.4434 \\ 
+			\hline
+			2 & 101.0653 \\
+			\hline
+			3 & 2587.0818\\
+			\hline
+			4 & 1544.3800 \\
+			\hline
+			5 & 1863.9424 \\
+			\hline
+			6 & 1217.2701 \\
+			\hline
+			7 & 1129.2498 \\
+			\hline
+			8 & 632.5131 \\
+			\hline
+			9 & 324.2942 \\
+			\hline
+			10 & 135.2466 \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{table}
 
+Kao što je vidljivo, instance $1$, $2$, $7$, $8$ i $9$ razlikuju se od ostalih po značajno manjim vrijednostima ostvarenih rješenja, a razlog tome je drugačija konfiguracija instanci. Naime, u tim su instancama gotovo svi učenici u dosegu svih stanica, pa je većinu učenika moguće smjestiti na stanice koje se nalaze tik do škole, a te školi bliske stanice najčešće bivaju i potpuno ispunjene, tako da algoritamu preostaje odrediti redoslijed posjećivanja tek malog broja ne-sasvim-popunjenih stanica (njih manje od 12), tako da to čini koristeći iscrpno pretraživanje.
+
+Nasuprot tome, primjeri $3-7$ bitno su veći po pitanju broja stanica koje treba optimalno poredati, pa se na njima primjenjuje lokalno pretraživanje, a i sam se algoritam pokreće više puta (jer zbog šuma daje različite početne rasporede, a zbog brzine se stigne izvesti mnogo puta unutar zadanog vremena), što bitno doprinosi kvaliteti ostvarenih rezultata.
+
+Uz ovaj ovdje opisani algoritam, postojao je još jedan drugi, neovisni, s bitno drugačijim pristupom koji je uključivao i genetske algoritme, ali usporedbom rezultata oba rješenja pokazalo se da ovaj algoritam postiže značajno bolja rješenja od drugoga, te je drugi na kraju napušten.
 
 \chapter{Zaključak}
 
-Prethodno opisani algoritam vrlo brzo dolazi do pontecijalno kvalitetnih rješenja. U sljedećim koracima je potrebno usporediti ta rješenja sa state of the art algoritmima.
+Na temelju ostvarenih rezultata i uočenih performansi, zaključeno je da ovaj  algoritam vrlo brzo pronalazi potencijalno vrlo kvalitetna rješenja. Idući bi korak u njegovoj evaluaciji bila usporedba sa \textit{state-of-the-art} algoritmima za ovaj problem, i tek bi se tada mogao donijeti konačan sud o njegovoj kvaliteti.
 
-Dodatno poboljšanje moguće je ubrzanjem vremena izvođenja što se može postići parelelizacijom samog algoritma. Moguće je i na jednostavan način pokrenuti više instanca istog algoritma. Ono što se još čini prikladno je napraviti nekakvu metaheuristiku na najvišoj tj. prvoj razini algoritma umjesto pohlepnog odabira stanica ili barem metaheuristika nad tim pohlepnim početnim rješenjima.
+Daljnje poboljšanje samog algoritma moguće je ubrzavanjem njegova vremena izvođenja, što se može postići paralelizacijom, bilo unutar samog algoritma, bilo njegovim pokretanjem u više neovisnih instanci. Također, prva razina algoritma (određivanje rasporeda učenika po stanicama) zasada se još uvijek temelji na (randomiziranom) pohlepnom pristupu, pa bi ga vjerojatno bilo moguće zamijeniti nekom metaheuristikom, bilo u potpunosti, bilo da ga ona u sebe uključi i vodi prema stvaranju još boljih rješenja.
 
 %\bibliography{literatura}
 %\bibliographystyle{fer}
