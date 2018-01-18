@@ -86,11 +86,11 @@ public class BusSelector {
         bst.setFitness(1000000000033.0);
 
         // TU JEDANAEST
-        /*
-        if (stops.length <= 10) {
+
+        if (stops.length <= 11) {
             permute(s, stopCnt, stops, p, stops.length, full);
             return bst;
-        }*/
+        }
 
         s.buses = realDP(s, stopCnt, stops, p);
 
@@ -105,7 +105,7 @@ public class BusSelector {
         for (int z = 0; z < stops.length && z < 3;z++) {
             s = ss.copy();
 
-            for (int i = 0; i < 70; i++) {
+            for (int i = 0; i < 30; i++) {
                 for (int j = 0; j < stops.length; j++) {
                     for (int k = 1; k <= 4; k++) {
                         if (j+k < stops.length) {

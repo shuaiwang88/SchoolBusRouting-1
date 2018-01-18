@@ -24,7 +24,7 @@ public class Main {
 
         //int i = Integer.parseInt(args[0]);
 
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 3; i <= 8; i++) {
 
         double bst = 100000454540.0;
 
