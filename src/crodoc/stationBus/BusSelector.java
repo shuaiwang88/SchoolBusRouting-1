@@ -87,7 +87,7 @@ public class BusSelector {
 
         // TU JEDANAEST
 
-        if (stops.length <= 11) {
+        if (stops.length <= 8) {
             permute(s, stopCnt, stops, p, stops.length, full);
             return bst;
         }
@@ -107,7 +107,7 @@ public class BusSelector {
 
             for (int i = 0; i < 40; i++) {
                 for (int j = 0; j < stops.length; j++) {
-                    for (int k = 1; k <= 10; k++) {
+                    for (int k = 1; k <= 6; k++) {
                         if (j+k < stops.length) {
                             swap(stopCnt, stops, j, j+k);
                             s.buses = realDP(s, stopCnt, stops, p);
