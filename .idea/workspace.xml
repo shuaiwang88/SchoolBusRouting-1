@@ -25,8 +25,8 @@
       <file leaf-file-name="BusSelector.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/crodoc/stationBus/BusSelector.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="233">
-              <caret line="104" column="50" lean-forward="false" selection-start-line="104" selection-start-column="50" selection-end-line="104" selection-end-column="50" />
+            <state relative-caret-position="334">
+              <caret line="107" column="42" lean-forward="true" selection-start-line="107" selection-start-column="42" selection-end-line="107" selection-end-column="42" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -124,8 +124,8 @@
         <option value="$PROJECT_DIR$/src/crodoc/stationBus/StationSelector.java" />
         <option value="$PROJECT_DIR$/src/crodoc/stationBus/SparseBusSelector.java" />
         <option value="$PROJECT_DIR$/src/crodoc/stationBus/SparseStationSelector.java" />
-        <option value="$PROJECT_DIR$/src/crodoc/stationBus/BusSelector.java" />
         <option value="$PROJECT_DIR$/src/crodoc/Main.java" />
+        <option value="$PROJECT_DIR$/src/crodoc/stationBus/BusSelector.java" />
       </list>
     </option>
   </component>
@@ -665,8 +665,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/crodoc/stationBus/BusSelector.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="233">
-          <caret line="104" column="50" lean-forward="false" selection-start-line="104" selection-start-column="50" selection-end-line="104" selection-end-column="50" />
+        <state relative-caret-position="334">
+          <caret line="107" column="42" lean-forward="true" selection-start-line="107" selection-start-column="42" selection-end-line="107" selection-end-column="42" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

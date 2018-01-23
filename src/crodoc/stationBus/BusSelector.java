@@ -105,9 +105,9 @@ public class BusSelector {
         for (int z = 0; z < stops.length && z < 10;z++) {
             s = ss.copy();
 
-            for (int i = 0; i < 50; i++) {
+            for (int i = 0; i < 40; i++) {
                 for (int j = 0; j < stops.length; j++) {
-                    for (int k = 1; k <= 5; k++) {
+                    for (int k = 1; k <= 10; k++) {
                         if (j+k < stops.length) {
                             swap(stopCnt, stops, j, j+k);
                             s.buses = realDP(s, stopCnt, stops, p);
