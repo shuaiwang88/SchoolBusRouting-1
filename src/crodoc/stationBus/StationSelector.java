@@ -25,6 +25,12 @@ public class StationSelector {
         sortedStops.sort((Integer a, Integer b) -> sDiff(a,b,p));
         Random rand = new Random();
 
+        List<Integer> sts = new ArrayList<>();
+
+        for (int i = 0; i < students; i++) {
+            sts.add(i);
+        }
+
         int cnt2 = 0;
         while (students != 0) {
             int who = -1;
@@ -80,7 +86,7 @@ public class StationSelector {
                 }
             }
 
-            if (cnt2++ == 1000) {
+            if (cnt2++ == 100) {
                 return null;
             }
 
@@ -90,7 +96,9 @@ public class StationSelector {
 
             if (!nxt) {
                 stopVisited[who] = true;
-                for (int id = 0; id < p.students; id++) {
+                Collections.shuffle(sts);
+                for (int id : sts) {
+                //for (int id = 0; id < p.students; id++) {
                     if (s.students[id] == 0 && studentDist(id, who, p) <= p.distance) {
                         s.students[id] = who;
                         students--;

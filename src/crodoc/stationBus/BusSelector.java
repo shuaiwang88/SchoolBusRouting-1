@@ -87,7 +87,7 @@ public class BusSelector {
 
         // TU JEDANAEST
 
-        if (stops.length <= 8) {
+        if (stops.length <= 11) {
             permute(s, stopCnt, stops, p, stops.length, full);
             return bst;
         }
