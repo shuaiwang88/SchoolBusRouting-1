@@ -10,7 +10,11 @@ import crodoc.stationBus.StationSelector;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
@@ -22,35 +26,47 @@ public class Main {
         }*/
 
 
-        //int i = Integer.parseInt(args[0]);
+        int i = Integer.parseInt(args[0]);
 
-        for (int i = 3; i <= 8; i++) {
+        //for (int i = 5; i <= 8; i++) {
 
         double bst = 100000454540.0;
 
         long t = System.currentTimeMillis();
 
-        for (int k = 0; System.currentTimeMillis() - t < 60*1000;k++) {
+        while (true) {
+        //for (int k = 0; System.currentTimeMillis() - t < 60*1000;k++) {
          {
             Problem p = new Problem("sbr" + i + ".txt");
 
-            ListSolution s = null;
-            while (s == null) {
-                s = StationSelector.selectStations(p);
+            List<Integer> ls = new ArrayList<>();
+            for (int ll = 0; ll < 100; ll++) {
+                ls.add(ll);
             }
 
-            s = BusSelector.selectStations(s, p);
+            List<ListSolution> lss = ls.parallelStream().map((ppp) -> {
+                ListSolution ss2 = null;
+                while (ss2 == null) {
+                    ss2 = StationSelector.selectStations(p);
+                }
 
+                ss2 = BusSelector.selectStations(ss2, p);
+
+                return ss2;
+
+            }).sorted().collect(Collectors.toList());
+
+            ListSolution s = lss.get(0);
 
             if (s.getFitness() < bst) {
-                System.out.println(k + " " + s.getFitness());
+                System.out.println(i + " " + s.getFitness());
                 bst = s.getFitness();
 
                 Scanner sc;
                 double fit = 10000000000.0;
 
                 try {
-                    sc = new Scanner(new File("result/info-1m"+i+".txt")) ;
+                    sc = new Scanner(new File("result/info-ne"+i+".txt")) ;
                     fit = Double.parseDouble(sc.next());
 
                 } catch (Exception e) {
@@ -65,7 +81,7 @@ public class Main {
                 PrintWriter out;
 
                 try {
-                    out = new PrintWriter("result/res-1m-sbr" + i + ".txt");
+                    out = new PrintWriter("result/res-ne-sbr" + i + ".txt");
                 } catch (FileNotFoundException e) {
                     throw new IllegalArgumentException();
                 }
@@ -74,7 +90,7 @@ public class Main {
                 out.close();
 
                 try {
-                    out = new PrintWriter("result/info-1m" + i + ".txt");
+                    out = new PrintWriter("result/info-ne" + i + ".txt");
                 } catch (FileNotFoundException e) {
                     throw new IllegalArgumentException();
                 }
@@ -85,6 +101,6 @@ public class Main {
             }
             //System.out.println(s.ToStr());
         }
-        }}
+        }//}
     }
 }

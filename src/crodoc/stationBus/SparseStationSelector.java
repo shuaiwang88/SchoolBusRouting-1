@@ -55,14 +55,16 @@ public class SparseStationSelector {
 
                 int st = sortedStops.get(index);
 
-                if (studentDist(i, st, p) <= p.distance && stopCnt[st] < p.capacity) {
+                if (studentDist(i, st, p) <= p.distance) {
                     hm++;
                 }
             }
             ss.add(new X(i,hm ));
         }
 
+
         Collections.sort(ss);
+
         for (int z = 0; z < 2; z++) {
             for (X x : ss) {
                 int who = x.who;
@@ -95,6 +97,9 @@ public class SparseStationSelector {
             ss = new ArrayList<>();
 
             for (int i = 0; i < p.students; i++) {
+                if (s.students[i] != 0) {
+                    continue;
+                }
                 int hm = 0;
 
                 for (int index = 0; index < stops; index++) {
@@ -108,25 +113,18 @@ public class SparseStationSelector {
                 ss.add(new X(i, hm));
             }
 
-            boolean uzeo = false;
-
             Collections.sort(ss);
             for (X x : ss) {
                 int who = x.who;
                 if (s.students[who] == 0) {
                     for (int index = 0; index < stops; index++) {
                         int st = sortedStops.get(index);
-                        if (studentDist(who, st, p) <= p.distance && stopCnt[st] < p.capacity-5 && stopCnt[st] > 0) {
+                        if (studentDist(who, st, p) <= p.distance && stopCnt[st] < p.capacity && stopCnt[st] > 0) {
                             s.students[who] = st;
                             stopCnt[st]++;
-                            uzeo = true;
                             break;
                         }
                     }
-                }
-
-                if (uzeo) {
-                    break;
                 }
             }
 
@@ -148,12 +146,83 @@ public class SparseStationSelector {
 
         int cnt = 0;
 
-        for (X x : ss) {
-            int who = x.who;
+        for (int who = 0; who < s.students.length; who++) {
             if (s.students[who] == 0) {
                 cnt++;
             }
         }
+
+        ss = new ArrayList<>();
+
+        for (int i = 0; i < p.students; i++) {
+            if (s.students[i] != 0) {
+                continue;
+            }
+            int hm = 0;
+
+            for (int index = 0; index < stops; index++) {
+
+                int st = sortedStops.get(index);
+
+                if (studentDist(i, st, p) <= p.distance && stopCnt[st] < p.capacity) {
+                    hm++;
+                }
+            }
+            ss.add(new X(i, hm));
+        }
+
+        Collections.sort(ss);
+
+        for (X x : ss) {
+            int who = x.who;
+            if (s.students[who] == 0) {
+                int bst = 0;
+                for (int index = 0; index < stops; index++) {
+                    int st = sortedStops.get(index);
+                    if (studentDist(who, st, p) <= p.distance && stopCnt[st] < p.capacity && stopCnt[st] > 0) {
+                        if (bst == 0) {
+                            bst = st;
+                        }
+                        if (stopCnt[st] > 0) {
+                            s.students[who] = st;
+                            stopCnt[st]++;
+                            break;
+                        }
+                    }
+
+
+                }
+
+                if (bst == 0) {
+                    continue;
+                }
+
+                s.students[who] = bst;
+                stopCnt[bst]++;
+
+            }
+        }
+
+        ss = new ArrayList<>();
+
+        for (int i = 0; i < p.students; i++) {
+            if (s.students[i] != 0) {
+                continue;
+            }
+            int hm = 0;
+
+            for (int index = 0; index < stops; index++) {
+
+                int st = sortedStops.get(index);
+
+                if (studentDist(i, st, p) <= p.distance && stopCnt[st] < p.capacity) {
+                    hm++;
+                }
+            }
+            ss.add(new X(i, hm));
+        }
+
+        Collections.sort(ss);
 
         for (X x : ss) {
             int who = x.who;
@@ -171,20 +240,22 @@ public class SparseStationSelector {
                             break;
                         }
                     }
-                    if (bst == 0) {
-                        return null;
-                    }
 
-                    s.students[who] = bst;
-                    stopCnt[bst]++;
+
+                }
+
+                s.students[who] = bst;
+                stopCnt[bst]++;
+
+                if (bst == 0) {
+                    return null;
                 }
             }
         }
 
          cnt = 0;
 
-        for (X x : ss) {
-            int who = x.who;
+        for (int who = 0; who < s.students.length; who++) {
             if (s.students[who] == 0) {
                 cnt++;
             }
