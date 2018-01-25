@@ -87,7 +87,7 @@ public class BusSelector {
 
         // TU JEDANAEST
 
-        if (stops.length <= 11) {
+        if (stops.length <= 6) {
             permute(s, stopCnt, stops, p, stops.length, full);
             return bst;
         }
@@ -102,10 +102,10 @@ public class BusSelector {
         bst = s.copy();
 
         ListSolution ss = s.copy();
-        for (int z = 0; z < stops.length && z < 10;z++) {
+        for (int z = 0; z < stops.length && z < 5;z++) {
             s = ss.copy();
 
-            for (int i = 0; i < 40; i++) {
+            for (int i = 0; i < 20; i++) {
                 for (int j = 0; j < stops.length; j++) {
                     for (int k = 1; k <= 6; k++) {
                         if (j+k < stops.length) {
